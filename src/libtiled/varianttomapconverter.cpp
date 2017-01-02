@@ -22,6 +22,7 @@
 #include "varianttomapconverter.h"
 
 #include "imagelayer.h"
+#include "gridlayer.h"
 #include "map.h"
 #include "mapobject.h"
 #include "objectgroup.h"
@@ -312,6 +313,8 @@ Layer *VariantToMapConverter::toLayer(const QVariant &variant)
         layer = toObjectGroup(variantMap);
     else if (variantMap[QLatin1String("type")] == QLatin1String("imagelayer"))
         layer = toImageLayer(variantMap);
+    else if (variantMap[QLatin1String("type")] == QLatin1String("gridlayer"))
+        layer = toGridLayer(variantMap);
 
     if (layer) {
         layer->setProperties(extractProperties(variantMap));
@@ -540,6 +543,32 @@ ImageLayer *VariantToMapConverter::toImageLayer(const QVariantMap &variantMap)
     }
 
     return imageLayer.take();
+}
+
+GridLayer *VariantToMapConverter::toGridLayer(const QVariantMap &variantMap)
+{
+    typedef QScopedPointer<GridLayer> GridLayerPtr;
+    GridLayerPtr gridLayer(new GridLayer(variantMap[QLatin1String("name")].toString(),
+                                            variantMap[QLatin1String("x")].toInt(),
+                                            variantMap[QLatin1String("y")].toInt(),
+                                            variantMap[QLatin1String("width")].toInt(),
+                                            variantMap[QLatin1String("height")].toInt()));
+
+    const qreal opacity = variantMap[QLatin1String("opacity")].toReal();
+    const bool visible = variantMap[QLatin1String("visible")].toBool();
+
+    gridLayer->setOpacity(opacity);
+    gridLayer->setVisible(visible);
+
+    const QString color = variantMap[QLatin1String("color")].toString();
+    if (!color.isEmpty() && QColor::isValidColor(color))
+        gridLayer->setColor(QColor(color));
+
+    const int gridWidth = variantMap[QLatin1String("gridwidth")].toInt();
+    const int gridHeight = variantMap[QLatin1String("gridheight")].toInt();
+    gridLayer->setGridSize(QSize(gridWidth, gridHeight));
+
+    return gridLayer.take();
 }
 
 QPolygonF VariantToMapConverter::toPolygon(const QVariant &variant) const

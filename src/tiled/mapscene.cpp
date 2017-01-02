@@ -40,6 +40,8 @@
 #include "tileselectionitem.h"
 #include "imagelayer.h"
 #include "imagelayeritem.h"
+#include "gridlayer.h"
+#include "gridlayeritem.h"
 #include "stylehelper.h"
 #include "toolmanager.h"
 #include "tilesetmanager.h"
@@ -144,6 +146,8 @@ void MapScene::setMapDocument(MapDocument *mapDocument)
                 this, SLOT(objectGroupChanged(ObjectGroup*)));
         connect(mMapDocument, SIGNAL(imageLayerChanged(ImageLayer*)),
                 this, SLOT(imageLayerChanged(ImageLayer*)));
+        connect(mMapDocument, SIGNAL(gridLayerChanged(GridLayer*)),
+                this, SLOT(gridLayerChanged(GridLayer*)));
         connect(mMapDocument, SIGNAL(currentLayerIndexChanged(int)),
                 this, SLOT(currentLayerIndexChanged()));
         // todo: possibly route this through the TilesetManager and
@@ -255,6 +259,8 @@ QGraphicsItem *MapScene::createLayerItem(Layer *layer)
         layerItem = ogItem;
     } else if (ImageLayer *il = layer->asImageLayer()) {
         layerItem = new ImageLayerItem(il, mMapDocument);
+    } else if (GridLayer *gl = layer->asGridLayer()) {
+        layerItem = new GridLayerItem(gl, mMapDocument);
     }
 
     Q_ASSERT(layerItem);
@@ -475,6 +481,18 @@ void MapScene::imageLayerChanged(ImageLayer *imageLayer)
     ImageLayerItem *item = static_cast<ImageLayerItem*>(mLayerItems.at(index));
 
     item->syncWithImageLayer();
+    item->update();
+}
+
+/**
+ * When a grid layer has changed, it may change size and it may look
+ * differently.
+ */
+void MapScene::gridLayerChanged(GridLayer *gridLayer)
+{
+    const int index = mMapDocument->map()->layers().indexOf(gridLayer);
+    GridLayerItem *item = static_cast<GridLayerItem*>(mLayerItems.at(index));
+
     item->update();
 }
 

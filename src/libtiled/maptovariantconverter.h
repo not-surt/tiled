@@ -58,6 +58,7 @@ private:
                        Map::LayerDataFormat format) const;
     QVariant toVariant(const ObjectGroup *objectGroup) const;
     QVariant toVariant(const ImageLayer *imageLayer) const;
+    QVariant toVariant(const GridLayer *gridLayer) const;
 
     void addLayerAttributes(QVariantMap &layerVariant,
                             const Layer *layer) const;

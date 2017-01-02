@@ -23,6 +23,8 @@
 #include "changelayer.h"
 #include "changeimagelayerposition.h"
 #include "changeimagelayerproperties.h"
+#include "changegridlayerposition.h"
+#include "changegridlayerproperties.h"
 #include "changemapobject.h"
 #include "changemapproperty.h"
 #include "changeobjectgroupproperties.h"
@@ -31,6 +33,7 @@
 #include "changetileprobability.h"
 #include "flipmapobjects.h"
 #include "imagelayer.h"
+#include "gridlayer.h"
 #include "map.h"
 #include "mapdocument.h"
 #include "mapobject.h"
@@ -160,6 +163,8 @@ void PropertyBrowser::setDocument(Document *document)
                 SLOT(objectGroupChanged(ObjectGroup*)));
         connect(mapDocument, SIGNAL(imageLayerChanged(ImageLayer*)),
                 SLOT(imageLayerChanged(ImageLayer*)));
+        connect(mapDocument, SIGNAL(gridLayerChanged(GridLayer*)),
+                SLOT(gridLayerChanged(GridLayer*)));
 
         connect(mapDocument, &MapDocument::selectedObjectsChanged,
                 this, &PropertyBrowser::selectedObjectsChanged);
@@ -258,6 +263,12 @@ void PropertyBrowser::objectGroupChanged(ObjectGroup *objectGroup)
 void PropertyBrowser::imageLayerChanged(ImageLayer *imageLayer)
 {
     if (mObject == imageLayer)
+        updateProperties();
+}
+
+void PropertyBrowser::gridLayerChanged(GridLayer *gridLayer)
+{
+    if (mObject == gridLayer)
         updateProperties();
 }
 
@@ -609,6 +620,19 @@ void PropertyBrowser::addImageLayerProperties()
     addProperty(groupProperty);
 }
 
+void PropertyBrowser::addGridLayerProperties()
+{
+    QtProperty *groupProperty = mGroupManager->addProperty(tr("Grid Layer"));
+    addLayerProperties(groupProperty);
+
+    addProperty(ColorProperty, QVariant::Color, tr("Color"), groupProperty);
+    addProperty(TileWidthProperty, QVariant::Int, tr("Grid Width"), groupProperty);
+    addProperty(TileHeightProperty, QVariant::Int, tr("Grid Height"), groupProperty);
+    addProperty(OffsetXProperty, QVariant::Double, tr("Horizontal Offset"), groupProperty);
+    addProperty(OffsetYProperty, QVariant::Double, tr("Vertical Offset"), groupProperty);
+    addProperty(groupProperty);
+}
+
 void PropertyBrowser::addTilesetProperties()
 {
     const Tileset *tileset = static_cast<const Tileset*>(mObject);
@@ -881,6 +905,7 @@ void PropertyBrowser::applyLayerValue(PropertyId id, const QVariant &val)
         case Layer::TileLayerType:   applyTileLayerValue(id, val);   break;
         case Layer::ObjectGroupType: applyObjectGroupValue(id, val); break;
         case Layer::ImageLayerType:  applyImageLayerValue(id, val);  break;
+        case Layer::GridLayerType:  applyGridLayerValue(id, val);  break;
         }
         break;
     }
@@ -949,6 +974,39 @@ void PropertyBrowser::applyImageLayerValue(PropertyId id, const QVariant &val)
                                                        imageSource));
         break;
     }
+    default:
+        break;
+    }
+}
+
+void PropertyBrowser::applyGridLayerValue(PropertyId id, const QVariant &val)
+{
+    GridLayer *gridLayer = static_cast<GridLayer*>(mObject);
+    QUndoStack *undoStack = mDocument->undoStack();
+
+    switch (id) {
+    case ColorProperty: {
+        undoStack->push(new ChangeGridLayerProperties(mMapDocument,
+                                                      gridLayer,
+                                                      val.value<QColor>(),
+                                                      gridLayer->gridWidth(),
+                                                      gridLayer->gridHeight()));
+        break;
+    }
+    case TileWidthProperty:
+        undoStack->push(new ChangeGridLayerProperties(mMapDocument,
+                                                      gridLayer,
+                                                      gridLayer->color(),
+                                                      val.toInt(),
+                                                      gridLayer->gridHeight()));
+        break;
+    case TileHeightProperty:
+        undoStack->push(new ChangeGridLayerProperties(mMapDocument,
+                                                      gridLayer,
+                                                      gridLayer->color(),
+                                                      gridLayer->gridWidth(),
+                                                      val.toInt()));
+        break;
     default:
         break;
     }
@@ -1102,6 +1160,7 @@ void PropertyBrowser::addProperties()
         case Layer::TileLayerType:      addTileLayerProperties();   break;
         case Layer::ObjectGroupType:    addObjectGroupProperties(); break;
         case Layer::ImageLayerType:     addImageLayerProperties();  break;
+        case Layer::GridLayerType:     addGridLayerProperties();  break;
         }
         break;
     case Object::TilesetType:           addTilesetProperties(); break;
@@ -1198,11 +1257,19 @@ void PropertyBrowser::updateProperties()
             mIdToProperty[DrawOrderProperty]->setValue(objectGroup->drawOrder());
             break;
         }
-        case Layer::ImageLayerType:
+        case Layer::ImageLayerType: {
             const ImageLayer *imageLayer = static_cast<const ImageLayer*>(layer);
             mIdToProperty[ImageSourceProperty]->setValue(QVariant::fromValue(FilePath { imageLayer->imageSource() }));
             mIdToProperty[ColorProperty]->setValue(imageLayer->transparentColor());
             break;
+        }
+        case Layer::GridLayerType: {
+            const GridLayer *gridLayer = static_cast<const GridLayer*>(layer);
+            mIdToProperty[ColorProperty]->setValue(gridLayer->color());
+            mIdToProperty[TileWidthProperty]->setValue(gridLayer->gridWidth());
+            mIdToProperty[TileHeightProperty]->setValue(gridLayer->gridHeight());
+            break;
+        }
         }
         break;
     }

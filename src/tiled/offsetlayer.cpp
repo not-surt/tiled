@@ -65,6 +65,9 @@ OffsetLayer::OffsetLayer(MapDocument *mapDocument,
     case Layer::ImageLayerType:
         // Nothing done for the image layer at the moment
         break;
+    case Layer::GridLayerType:
+        // Nothing done for the grid layer at the moment
+        break;
     }
 }
 

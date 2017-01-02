@@ -246,6 +246,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     mNewLayerMenu->addAction(mActionHandler->actionAddTileLayer());
     mNewLayerMenu->addAction(mActionHandler->actionAddObjectGroup());
     mNewLayerMenu->addAction(mActionHandler->actionAddImageLayer());
+    mNewLayerMenu->addAction(mActionHandler->actionAddGridLayer());
     mNewLayerMenu->addSeparator();
     mNewLayerMenu->addAction(mActionHandler->actionLayerViaCopy());
     mNewLayerMenu->addAction(mActionHandler->actionLayerViaCut());

@@ -40,6 +40,8 @@ DynamicLibrary {
         "filesystemwatcher.h",
         "gidmapper.cpp",
         "gidmapper.h",
+        "gridlayer.cpp",
+        "gridlayer.h",
         "hexagonalrenderer.cpp",
         "hexagonalrenderer.h",
         "imagelayer.cpp",

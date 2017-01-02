@@ -32,6 +32,7 @@
 #include "flipmapobjects.h"
 #include "hexagonalrenderer.h"
 #include "imagelayer.h"
+#include "gridlayer.h"
 #include "isometricrenderer.h"
 #include "layermodel.h"
 #include "mapobjectmodel.h"
@@ -322,6 +323,9 @@ void MapDocument::resizeMap(const QSize &size, const QPoint &offset, bool remove
         case Layer::ImageLayerType:
             // Currently not adjusted when resizing the map
             break;
+        case Layer::GridLayerType:
+            // Currently not adjusted when resizing the map
+            break;
         }
     }
 
@@ -418,6 +422,10 @@ Layer *MapDocument::addLayer(Layer::TypeFlag layerType)
     case Layer::ImageLayerType:
         name = tr("Image Layer %1").arg(mMap->imageLayerCount() + 1);
         layer = new ImageLayer(name, 0, 0, mMap->width(), mMap->height());
+        break;
+    case Layer::GridLayerType:
+        name = tr("Grid Layer %1").arg(mMap->gridLayerCount() + 1);
+        layer = new GridLayer(name, 0, 0, mMap->width(), mMap->height());
         break;
     }
     Q_ASSERT(layer);

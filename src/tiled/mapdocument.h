@@ -218,6 +218,7 @@ public:
 
     void emitObjectGroupChanged(ObjectGroup *objectGroup);
     void emitImageLayerChanged(ImageLayer *imageLayer);
+    void emitGridLayerChanged(GridLayer *gridLayer);
 
     void emitEditLayerNameRequested();
 
@@ -274,6 +275,8 @@ signals:
     void objectGroupChanged(ObjectGroup *objectGroup);
 
     void imageLayerChanged(ImageLayer *imageLayer);
+
+    void gridLayerChanged(GridLayer *gridLayer);
 
     void tilesetAboutToBeAdded(int index);
     void tilesetAdded(int index, Tileset *tileset);
@@ -391,6 +394,15 @@ inline void MapDocument::emitObjectGroupChanged(ObjectGroup *objectGroup)
 inline void MapDocument::emitImageLayerChanged(ImageLayer *imageLayer)
 {
     emit imageLayerChanged(imageLayer);
+}
+
+/**
+ * Emits the gridLayerChanged signal, should be called when changing the
+ * image or the transparent color of an image layer.
+ */
+inline void MapDocument::emitGridLayerChanged(GridLayer *gridLayer)
+{
+    emit gridLayerChanged(gridLayer);
 }
 
 /**

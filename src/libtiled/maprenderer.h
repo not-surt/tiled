@@ -42,6 +42,7 @@ class MapObject;
 class Tile;
 class TileLayer;
 class ImageLayer;
+class GridLayer;
 
 enum RenderFlag {
     ShowTileObjectOutlines = 0x1
@@ -143,6 +144,13 @@ public:
      */
     void drawImageLayer(QPainter *painter,
                         const ImageLayer *imageLayer,
+                        const QRectF &exposed = QRectF());
+
+    /**
+     * Draws the given grid \a layer using the given \a painter.
+     */
+    void drawGridLayer(QPainter *painter,
+                        const GridLayer *gridLayer,
                         const QRectF &exposed = QRectF());
 
     /**

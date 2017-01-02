@@ -64,6 +64,7 @@ MapDocumentActionHandler::MapDocumentActionHandler(QObject *parent)
     QIcon addTileLayerIcon(QLatin1String(":/images/16x16/layer-tile.png"));
     QIcon addObjectLayerIcon(QLatin1String(":/images/16x16/layer-object.png"));
     QIcon addImageLayerIcon(QLatin1String(":/images/16x16/layer-image.png"));
+    QIcon addGridLayerIcon(QLatin1String(":/images/16x16/layer-tile.png"));
 
     addTileLayerIcon.addFile(QLatin1String(":/images/32x32/layer-tile.png"));
     addObjectLayerIcon.addFile(QLatin1String(":/images/32x32/layer-object.png"));
@@ -74,6 +75,8 @@ MapDocumentActionHandler::MapDocumentActionHandler(QObject *parent)
     mActionAddObjectGroup->setIcon(addObjectLayerIcon);
     mActionAddImageLayer = new QAction(this);
     mActionAddImageLayer->setIcon(addImageLayerIcon);
+    mActionAddGridLayer = new QAction(this);
+    mActionAddGridLayer->setIcon(addGridLayerIcon);
 
     mActionDuplicateLayer = new QAction(this);
     mActionDuplicateLayer->setShortcut(tr("Ctrl+Shift+D"));
@@ -137,6 +140,7 @@ MapDocumentActionHandler::MapDocumentActionHandler(QObject *parent)
     connect(mActionAddObjectGroup, SIGNAL(triggered()),
             SLOT(addObjectGroup()));
     connect(mActionAddImageLayer, SIGNAL(triggered()), SLOT(addImageLayer()));
+    connect(mActionAddGridLayer, SIGNAL(triggered()), SLOT(addGridLayer()));
     connect(mActionLayerViaCopy, &QAction::triggered, this, &MapDocumentActionHandler::layerViaCopy);
     connect(mActionLayerViaCut, &QAction::triggered, this, &MapDocumentActionHandler::layerViaCut);
     connect(mActionDuplicateLayer, SIGNAL(triggered()),
@@ -175,6 +179,7 @@ void MapDocumentActionHandler::retranslateUi()
     mActionAddTileLayer->setText(tr("&Tile Layer"));
     mActionAddObjectGroup->setText(tr("&Object Layer"));
     mActionAddImageLayer->setText(tr("&Image Layer"));
+    mActionAddGridLayer->setText(tr("&Grid Layer"));
     mActionLayerViaCopy->setText(tr("Layer via Copy"));
     mActionLayerViaCut->setText(tr("Layer via Cut"));
     mActionDuplicateLayer->setText(tr("&Duplicate Layer"));
@@ -359,6 +364,12 @@ void MapDocumentActionHandler::addImageLayer()
 {
      if (mMapDocument)
          mMapDocument->addLayer(Layer::ImageLayerType);
+}
+
+void MapDocumentActionHandler::addGridLayer()
+{
+     if (mMapDocument)
+         mMapDocument->addLayer(Layer::GridLayerType);
 }
 
 void MapDocumentActionHandler::layerVia(MapDocumentActionHandler::LayerViaVariant variant)
@@ -562,6 +573,7 @@ void MapDocumentActionHandler::updateActions()
     mActionAddTileLayer->setEnabled(map);
     mActionAddObjectGroup->setEnabled(map);
     mActionAddImageLayer->setEnabled(map);
+    mActionAddGridLayer->setEnabled(map);
 
     bool usableSelection = currentLayer && ((currentLayer->isObjectGroup() && selectedObjectsCount > 0) ||
                                             (currentLayer->isTileLayer() && !selection.isEmpty()));

@@ -33,6 +33,7 @@
 #include "compression.h"
 #include "gidmapper.h"
 #include "imagelayer.h"
+#include "gridlayer.h"
 #include "objectgroup.h"
 #include "map.h"
 #include "mapobject.h"
@@ -103,6 +104,8 @@ private:
 
     ImageLayer *readImageLayer();
     void readImageLayerImage(ImageLayer &imageLayer);
+
+    GridLayer *readGridLayer();
 
     ObjectGroup *readObjectGroup();
     MapObject *readObject();
@@ -257,6 +260,8 @@ Map *MapReaderPrivate::readMap()
             mMap->addLayer(readObjectGroup());
         else if (xml.name() == QLatin1String("imagelayer"))
             mMap->addLayer(readImageLayer());
+        else if (xml.name() == QLatin1String("gridlayer"))
+            mMap->addLayer(readGridLayer());
         else
             readUnknownElement();
     }
@@ -792,6 +797,41 @@ void MapReaderPrivate::readImageLayerImage(ImageLayer &imageLayer)
     imageLayer.loadFromImage(source);
 
     xml.skipCurrentElement();
+}
+
+GridLayer *MapReaderPrivate::readGridLayer()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("gridlayer"));
+
+    const QXmlStreamAttributes atts = xml.attributes();
+    const QString name = atts.value(QLatin1String("name")).toString();
+    const int x = atts.value(QLatin1String("x")).toInt();
+    const int y = atts.value(QLatin1String("y")).toInt();
+    const int width = atts.value(QLatin1String("width")).toInt();
+    const int height = atts.value(QLatin1String("height")).toInt();
+
+    GridLayer *gridLayer = new GridLayer(name, x, y, width, height);
+    readLayerAttributes(*gridLayer, atts);
+
+    QString color = atts.value(QLatin1String("color")).toString();
+    if (!color.isEmpty()) {
+        if (!color.startsWith(QLatin1Char('#')))
+            color.prepend(QLatin1Char('#'));
+        gridLayer->setColor(QColor(color));
+    }
+
+    const int gridWidth = atts.value(QLatin1String("gridwidth")).toInt();
+    const int gridHeight = atts.value(QLatin1String("gridheight")).toInt();
+    gridLayer->setGridSize(QSize(gridWidth, gridHeight));
+
+    while (xml.readNextStartElement()) {
+        if (xml.name() == QLatin1String("properties"))
+            gridLayer->mergeProperties(readProperties());
+        else
+            readUnknownElement();
+    }
+
+    return gridLayer;
 }
 
 MapObject *MapReaderPrivate::readObject()

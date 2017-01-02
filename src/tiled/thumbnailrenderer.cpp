@@ -205,6 +205,9 @@ QImage ThumbnailRenderer::render(const QSize &size) const
             mRenderer->drawImageLayer(&painter, imageLayer);
             break;
         }
+        case Layer::GridLayerType: {
+            // Do nothing
+        }
         }
 
         painter.translate(-layer->offset());

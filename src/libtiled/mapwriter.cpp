@@ -35,6 +35,7 @@
 #include "map.h"
 #include "mapobject.h"
 #include "imagelayer.h"
+#include "gridlayer.h"
 #include "objectgroup.h"
 #include "tile.h"
 #include "tilelayer.h"
@@ -88,6 +89,7 @@ private:
     void writeObjectGroup(QXmlStreamWriter &w, const ObjectGroup &objectGroup);
     void writeObject(QXmlStreamWriter &w, const MapObject &mapObject);
     void writeImageLayer(QXmlStreamWriter &w, const ImageLayer &imageLayer);
+    void writeGridLayer(QXmlStreamWriter &w, const GridLayer &gridLayer);
     void writeProperties(QXmlStreamWriter &w,
                          const Properties &properties);
 
@@ -221,6 +223,8 @@ void MapWriterPrivate::writeMap(QXmlStreamWriter &w, const Map &map)
             writeObjectGroup(w, *static_cast<const ObjectGroup*>(layer));
         else if (type == Layer::ImageLayerType)
             writeImageLayer(w, *static_cast<const ImageLayer*>(layer));
+        else if (type == Layer::GridLayerType)
+            writeGridLayer(w, *static_cast<const GridLayer*>(layer));
     }
 
     w.writeEndElement();
@@ -619,6 +623,24 @@ void MapWriterPrivate::writeImageLayer(QXmlStreamWriter &w,
     }
 
     writeProperties(w, imageLayer.properties());
+
+    w.writeEndElement();
+}
+
+void MapWriterPrivate::writeGridLayer(QXmlStreamWriter &w,
+                                       const GridLayer &gridLayer)
+{
+    w.writeStartElement(QLatin1String("gridlayer"));
+    writeLayerAttributes(w, gridLayer);
+
+    const QColor color = gridLayer.color();
+    if (color.isValid())
+        w.writeAttribute(QLatin1String("color"), color.name().mid(1));
+
+    w.writeAttribute(QLatin1String("gridwidth"), QString::number(gridLayer.gridWidth()));
+    w.writeAttribute(QLatin1String("gridheight"), QString::number(gridLayer.gridHeight()));
+
+    writeProperties(w, gridLayer.properties());
 
     w.writeEndElement();
 }

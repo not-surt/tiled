@@ -83,6 +83,7 @@ private:
     TileLayer *toTileLayer(const QVariantMap &variantMap);
     ObjectGroup *toObjectGroup(const QVariantMap &variantMap);
     ImageLayer *toImageLayer(const QVariantMap &variantMap);
+    GridLayer *toGridLayer(const QVariantMap &variantMap);
 
     QPolygonF toPolygon(const QVariant &variant) const;
 

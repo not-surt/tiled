@@ -32,6 +32,7 @@
 namespace Tiled {
 
 class ImageLayer;
+class GridLayer;
 class Layer;
 class MapObject;
 class ObjectGroup;
@@ -164,6 +165,7 @@ private slots:
 
     void objectGroupChanged(ObjectGroup *objectGroup);
     void imageLayerChanged(ImageLayer *imageLayer);
+    void gridLayerChanged(GridLayer *gridLayer);
 
     void adaptToTilesetTileSizeChanges(Tileset *tileset);
     void adaptToTileSizeChanges(Tile *tile);

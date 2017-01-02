@@ -72,6 +72,7 @@ LayerDock::LayerDock(QWidget *parent):
     newLayerMenu->addAction(handler->actionAddTileLayer());
     newLayerMenu->addAction(handler->actionAddObjectGroup());
     newLayerMenu->addAction(handler->actionAddImageLayer());
+    newLayerMenu->addAction(handler->actionAddGridLayer());
 
     const QIcon newIcon(QLatin1String(":/images/16x16/document-new.png"));
     QToolButton *newLayerButton = new QToolButton;
@@ -317,6 +318,7 @@ void LayerView::contextMenuEvent(QContextMenuEvent *event)
     menu.addAction(handler->actionAddTileLayer());
     menu.addAction(handler->actionAddObjectGroup());
     menu.addAction(handler->actionAddImageLayer());
+    menu.addAction(handler->actionAddGridLayer());
 
     if (proxyIndex.isValid()) {
         menu.addAction(handler->actionDuplicateLayer());

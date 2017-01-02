@@ -29,6 +29,7 @@
 #include "maprenderer.h"
 
 #include "imagelayer.h"
+#include "gridlayer.h"
 #include "tile.h"
 #include "tilelayer.h"
 
@@ -50,6 +51,15 @@ void MapRenderer::drawImageLayer(QPainter *painter,
     Q_UNUSED(exposed)
 
     painter->drawPixmap(QPointF(), imageLayer->image());
+}
+
+void MapRenderer::drawGridLayer(QPainter *painter,
+                                const GridLayer *imageLayer,
+                                const QRectF &exposed)
+{
+//    Q_UNUSED(exposed)
+
+//    painter->drawPixmap(QPointF(), imageLayer->image());
 }
 
 void MapRenderer::setFlag(RenderFlag flag, bool enabled)

@@ -29,6 +29,7 @@
 
 #include "layer.h"
 
+#include "gridlayer.h"
 #include "imagelayer.h"
 #include "objectgroup.h"
 #include "tilelayer.h"
@@ -84,4 +85,9 @@ ObjectGroup *Layer::asObjectGroup()
 ImageLayer *Layer::asImageLayer()
 {
     return isImageLayer() ? static_cast<ImageLayer*>(this) : nullptr;
+}
+
+GridLayer *Layer::asGridLayer()
+{
+    return isGridLayer() ? static_cast<GridLayer*>(this) : nullptr;
 }

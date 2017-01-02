@@ -42,6 +42,7 @@
 namespace Tiled {
 
 class Map;
+class GridLayer;
 class ImageLayer;
 class ObjectGroup;
 class TileLayer;
@@ -55,7 +56,8 @@ public:
     enum TypeFlag {
         TileLayerType   = 0x01,
         ObjectGroupType = 0x02,
-        ImageLayerType  = 0x04
+        ImageLayerType  = 0x04,
+        GridLayerType   = 0x08
     };
 
     enum { AnyLayerType = 0xFF };
@@ -212,11 +214,13 @@ public:
     bool isTileLayer() const { return mLayerType == TileLayerType; }
     bool isObjectGroup() const { return mLayerType == ObjectGroupType; }
     bool isImageLayer() const { return mLayerType == ImageLayerType; }
+    bool isGridLayer() const { return mLayerType == GridLayerType; }
 
     // These actually return this layer cast to one of its subclasses.
     TileLayer *asTileLayer();
     ObjectGroup *asObjectGroup();
     ImageLayer *asImageLayer();
+    GridLayer *asGridLayer();
 
 protected:
     Layer *initializeClone(Layer *clone) const;

@@ -22,6 +22,7 @@
 #include "maptovariantconverter.h"
 
 #include "imagelayer.h"
+#include "gridlayer.h"
 #include "map.h"
 #include "mapobject.h"
 #include "objectgroup.h"
@@ -94,6 +95,9 @@ QVariant MapToVariantConverter::toVariant(const Map *map, const QDir &mapDir)
             break;
         case Layer::ImageLayerType:
             layerVariants << toVariant(static_cast<const ImageLayer*>(layer));
+            break;
+        case Layer::GridLayerType:
+            layerVariants << toVariant(static_cast<const GridLayer*>(layer));
             break;
         }
     }
@@ -382,6 +386,23 @@ QVariant MapToVariantConverter::toVariant(const ImageLayer *imageLayer) const
         imageLayerVariant[QLatin1String("transparentcolor")] = transColor.name();
 
     return imageLayerVariant;
+}
+
+QVariant MapToVariantConverter::toVariant(const GridLayer *gridLayer) const
+{
+    QVariantMap gridLayerVariant;
+    gridLayerVariant[QLatin1String("type")] = QLatin1String("gridlayer");
+
+    addLayerAttributes(gridLayerVariant, gridLayer);
+
+    const QColor color = gridLayer->color();
+    if (color.isValid())
+        gridLayerVariant[QLatin1String("color")] = color.name();
+
+    gridLayerVariant[QLatin1String("gridwidth")] = gridLayer->gridWidth();
+    gridLayerVariant[QLatin1String("gridheight")] = gridLayer->gridHeight();
+
+    return gridLayerVariant;
 }
 
 void MapToVariantConverter::addLayerAttributes(QVariantMap &layerVariant,

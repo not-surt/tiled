@@ -261,6 +261,10 @@ void ExportAsImageDialog::accept()
             renderer->drawImageLayer(&painter, imageLayer);
             break;
         }
+        case Layer::GridLayerType: {
+            // Do nothing
+            break;
+        }
         }
 
         painter.translate(-layer->offset());

@@ -237,6 +237,9 @@ public:
     int imageLayerCount() const
     { return layerCount(Layer::ImageLayerType); }
 
+    int gridLayerCount() const
+    { return layerCount(Layer::GridLayerType); }
+
     /**
      * Returns the layer at the specified index.
      */
